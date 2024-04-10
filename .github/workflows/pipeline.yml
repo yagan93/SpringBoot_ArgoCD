@@ -1,0 +1,114 @@
+name: Pipeline
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ '*' ]
+
+jobs:
+  run-unit-and-integration-tests:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/release'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run unit tests
+        run: ./gradlew test --tests '*.*Unit*'
+
+      - name: Run integration tests
+        run: ./gradlew test --tests '*.*Integration*'
+
+  deploy-to-staging-and-run-further-tests:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/release' || (github.event_name == 'pull_request' && github.base_ref == 'release' && github.head_ref == 'main')
+    needs: run-unit-and-integration-tests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Get project version
+        run: echo "PROJECT_VERSION=$(./gradlew -q printVersion)" >> $GITHUB_ENV
+
+      - name: Build and Push Docker Image
+        uses: mr-smithers-excellent/docker-build-push@v4
+        with:
+          image: ${{ secrets.DOCKER_USERNAME }}/spring
+          tag: ${{ env.PROJECT_VERSION }}
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Checkout GitOps repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.actor }}/ArgoCD_GitOps
+          token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
+          ref: main
+
+      - name: Update image tag in values.yml
+        run: |
+          sed -i "s/tag: .*/tag: ${{ env.PROJECT_VERSION }}/" values_staging.yml
+
+      - name: Commit and push changes to GitOps repository
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
+          git add values_staging.yml
+          git commit --allow-empty -m "Deploy ${{ env.PROJECT_VERSION }} to staging"
+          git push
+
+      - name: Wait for ArgoCD deployment
+        run: |
+          # Add commands to check the status of ArgoCD deployment here
+          # You may use ArgoCD CLI or API to check the deployment status
+          # Example:
+          # argocd app wait <APP_NAME> --timeout 300
+
+      - name: Run system tests
+        run: |
+          # Add the execution of further tests here 
+          # You may use Newman for system testing
+          # Example:
+          # newman run collection.json -e environment.json
+
+  deploy-to-production:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout GitOps repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.actor }}/ArgoCD_GitOps
+          token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
+          ref: main
+
+      - name: Update image tag with version from staging in production values.yml
+        run: |
+          version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
+          sed -i "s/tag: .*/tag: $version/" values_production.yml
+
+      - name: Commit and push changes to GitOps repository
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
+          git add values_production.yml
+          git commit --allow-empty -m "Deploy $version to production"
+          git push
