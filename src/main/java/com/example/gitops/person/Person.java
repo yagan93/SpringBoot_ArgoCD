@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
-
+// ene
 @Entity
 @Table(name = "person")
 public class Person {
