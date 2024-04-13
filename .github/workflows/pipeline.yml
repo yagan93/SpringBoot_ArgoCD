@@ -17,7 +17,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 17
+          java-version: 21
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -39,7 +39,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 17
+          java-version: 21
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -48,7 +48,7 @@ jobs:
         run: echo "PROJECT_VERSION=$(./gradlew -q printVersion)" >> $GITHUB_ENV
 
       - name: Build and Push Docker Image
-        uses: mr-smithers-excellent/docker-build-push@v4
+        uses: mr-smithers-excellent/docker-build-push@
         with:
           image: ${{ secrets.DOCKER_USERNAME }}/spring
           tag: ${{ env.PROJECT_VERSION }}
