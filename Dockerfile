@@ -3,7 +3,7 @@ WORKDIR /app
 COPY . .
 RUN gradle clean bootJar
 
-FROM oracle/openjdk-21
+FROM eclipse-temurin:21-jdk-jammy
 WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar /app/spring-app.jar
 EXPOSE 8080
