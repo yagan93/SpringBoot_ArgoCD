@@ -1,9 +1,9 @@
-FROM gradle:8.7.0-jdk21 AS builder
+FROM gradle:8.7.0 AS builder
 WORKDIR /app
 COPY . .
 RUN gradle clean bootJar
 
-FROM eclipse-temurin:openjdk-21
+FROM oracle/openjdk-21
 WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar /app/spring-app.jar
 EXPOSE 8080
