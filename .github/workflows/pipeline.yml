@@ -86,11 +86,7 @@ jobs:
       - name: Run system tests
         run: |
           npm install -g newman
-          newman run src/test/tests/system/CatFactsTests.json
-          # Add the execution of further tests here 
-          # You may use Newman for system testing
-          # Example:
-          # newman run collection.json -e environment.json
+          newman run ./tests/system/CatFactsTests.json
 
   deploy-to-production:
     runs-on: ubuntu-latest
