@@ -100,7 +100,15 @@ jobs:
           token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
           ref: main
 
-      - name: Create and push changes to GitOps repository
+      - name: Update image tag with version from staging in production values.yml
         run: |
-          # Generiere die Änderungen
-          echo "apiVersion: argoproj.io/v1alpha1
+          version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
+          sed -i "s/tag: .*/tag: $version/" values_production.yml
+
+      - name: Commit and push changes to GitOps repository
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
+          git add values_production.yml
+          git commit --allow-empty -m "Deploy $version to production"
+          git push
