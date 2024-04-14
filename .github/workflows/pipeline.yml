@@ -83,10 +83,14 @@ jobs:
           # Example:
           # argocd app wait <APP_NAME> --timeout 300
 
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Run system tests
         run: |
           npm install -g newman
-          newman run https://github.com/Trojka2000/SpringBoot_ArgoCD/blob/086f4a80bffd20297f901ab11f0ac4ac27b53409/src/test/tests/system/CatFactsTests.json
+          newman run ./src/test/tests/system/CatFactsTests.json
+          #newman run https://github.com/Trojka2000/SpringBoot_ArgoCD/blob/086f4a80bffd20297f901ab11f0ac4ac27b53409/src/test/tests/system/CatFactsTests.json
 
   deploy-to-production:
     runs-on: ubuntu-latest
