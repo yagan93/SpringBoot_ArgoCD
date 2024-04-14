@@ -28,10 +28,6 @@ jobs:
       - name: Run integration tests
         run: ./gradlew test --tests '*.*Integration*'
 
-      - name: Run system tests
-        run: |
-          npm install -g newman
-          newman run ./src/test/tests/system/CatFactsTests.json
 
   deploy-to-staging-and-run-further-tests:
     runs-on: ubuntu-latest
@@ -87,10 +83,10 @@ jobs:
           # Example:
           # argocd app wait <APP_NAME> --timeout 300
 
-     # - name: Run system tests
-          #run: |
-          # npm install -g newman
-          #newman run ./src/test/tests/system/CatFactsTests.json
+      - name: Run system tests
+        run: |
+          npm install -g newman
+          newman run ../../.././src/test/tests/system/CatFactsTests.json
           # Add the execution of further tests here 
           # You may use Newman for system testing
           # Example:
