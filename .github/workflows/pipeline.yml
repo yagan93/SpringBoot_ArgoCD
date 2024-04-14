@@ -26,7 +26,12 @@ jobs:
         run: ./gradlew test --tests '*.*Unit*'
 
       - name: Run integration tests
-        run: ./gradlew test --tests '*.*Integration*'
+        run: |
+          npm install -g newman
+          newman run ./gradlew test --tests '*.*Integration*'
+
+      - name: Run API Tests
+        run: ./src/test/tests/system
 
   deploy-to-staging-and-run-further-tests:
     runs-on: ubuntu-latest
