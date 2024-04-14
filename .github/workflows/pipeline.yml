@@ -85,7 +85,7 @@ jobs:
       - name: Run system tests
         run: |
           npm install -g newman
-          newman run ./src/test/tests/system/CatFactsTests.json
+          newman run CatFactsTests.json
           # Add the execution of further tests here 
           # You may use Newman for system testing
           # Example:
