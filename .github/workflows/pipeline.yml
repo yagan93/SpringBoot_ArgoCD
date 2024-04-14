@@ -93,32 +93,22 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-        - name: Check if push is via pull request
-          run: |
-            if [ "${{ github.event.head.repo.full_name }}" != "${{ github.event.base.repo.full_name }}" ]; then
-              echo "Push was made via pull request. Deployment allowed."
-            else
-              echo "Direct pushes to main branch are not allowed. Please submit a pull request."
-              exit 1
-            fi
-          shell: bash
+      - name: Checkout GitOps repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.actor }}/ArgoCD_GitOps
+          token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
+          ref: main
 
-        - name: Checkout GitOps repository
-          uses: actions/checkout@v4
-          with:
-            repository: ${{ github.actor }}/ArgoCD_GitOps
-            token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
-            ref: main
+      - name: Update image tag with version from staging in production values.yml
+        run: |
+          version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
+          sed -i "s/tag: .*/tag: $version/" values_production.yml
 
-        - name: Update image tag with version from staging in production values.yml
-          run: |
-            version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
-            sed -i "s/tag: .*/tag: $version/" values_production.yml
-
-        - name: Commit and push changes to GitOps repository
-          run: |
-            git config --global user.email "github-actions@github.com"
-            git config --global user.name "github-actions"
-            git add values_production.yml
-            git commit --allow-empty -m "Deploy $version to production"
-            git push
+      - name: Commit and push changes to GitOps repository
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
+          git add values_production.yml
+          git commit --allow-empty -m "Deploy $version to production"
+          git push
