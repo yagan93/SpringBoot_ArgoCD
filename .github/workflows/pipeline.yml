@@ -121,12 +121,3 @@ jobs:
           git add values_production.yml
           git commit --allow-empty -m "Deploy $version to production"
           git push
-
-      - name: Erstelle Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: Update production-people-api.yml
-          body: |
-            Dieser Pull Request enthält Aktualisierungen für das Produktions-Deployment.
-            Bitte überprüfen und zusammenführen, wenn alles gut aussieht.
