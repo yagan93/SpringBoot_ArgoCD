@@ -28,15 +28,6 @@ jobs:
       - name: Run integration tests
         run: ./gradlew test --tests '*.*Integration*'
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: update-production
-          title: "Update Production with changes"
-          body: |
-            This Pull Request proposes updating the production environment with changes made from the staging environment.
-
 
   deploy-to-staging-and-run-further-tests:
     runs-on: ubuntu-latest
