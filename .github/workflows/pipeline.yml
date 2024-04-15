@@ -105,12 +105,20 @@ jobs:
           version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
           sed -i "s/tag: .*/tag: $version/" values_production.yml
 
+      - name: Commit changes to GitOps repository
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
+          git add values_production.yml
+          git commit -m "Deploy $version to production"
+          git push origin HEAD:refs/heads/feature/production
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Deploy changes to production"
+          commit-message: "Merge feature/production into main"
           branch: main
-          title: "Deploy changes to production"
+          title: "Merge feature/production into main"
           body: |
-            This pull request deploys the changes to the production environment after they have been tested in staging.
+            This pull request merges the changes from the feature/production branch into the main branch.
