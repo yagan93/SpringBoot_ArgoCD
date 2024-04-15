@@ -17,7 +17,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 17
+          java-version: 21
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -39,7 +39,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 17
+          java-version: 21
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -91,7 +91,7 @@ jobs:
 
   deploy-to-production:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout GitOps repository
         uses: actions/checkout@v4
@@ -105,10 +105,12 @@ jobs:
           version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
           sed -i "s/tag: .*/tag: $version/" values_production.yml
 
-      - name: Commit and push changes to GitOps repository
-        run: |
-          git config --global user.email "github-actions@github.com"
-          git config --global user.name "github-actions"
-          git add values_production.yml
-          git commit --allow-empty -m "Deploy $version to production"
-          git push
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Deploy changes to production"
+          branch: main
+          title: "Deploy changes to production"
+          body: |
+            This pull request deploys the changes to the production environment after they have been tested in staging.
