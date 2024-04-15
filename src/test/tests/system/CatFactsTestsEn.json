@@ -1,0 +1,219 @@
+{
+	"info": {
+		"_postman_id": "8c97f57b-3831-4d81-b819-dcceea43e14c",
+		"name": "CatFactsTests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34267660"
+	},
+	"item": [
+		{
+			"name": "Erfolgreiche API anfrage",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Statuscode ist 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://catfact.ninja/fact",
+					"protocol": "https",
+					"host": [
+						"catfact",
+						"ninja"
+					],
+					"path": [
+						"fact"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Antwort JASON Format",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Antwort enthält Katzenfakt\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"fact\");\r",
+							"    pm.expect(jsonData.fact).to.be.a(\"string\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{\"api_domain\"}}",
+					"host": [
+						"{{\"api_domain\"}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cat Fact String",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response ist im JSON-Format\", function () {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{\"api_domain\"}}",
+					"host": [
+						"{{\"api_domain\"}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unterschiedliche Facts environment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Unterschiedliche Katzenfakten bei wiederholten Anfragen\", function () {\r",
+							"    var firstFact = pm.response.json().fact;\r",
+							"    pm.sendRequest(\"https://catfact.ninja/fact\", function (err, response) {\r",
+							"        pm.expect(response.json().fact).to.not.eql(firstFact);\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{\"api_domain\"}}",
+					"host": [
+						"{{\"api_domain\"}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Antwort länger als 255 environment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Katzenfakt hat maximale Länge\", function () {\r",
+							"    var fact = pm.response.json().fact;\r",
+							"    pm.expect(fact.length).to.be.at.most(255); // Maximal 255 Zeichen laut API-Dokumentation\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{\"api_domain\"}}",
+					"host": [
+						"{{\"api_domain\"}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cat fact kein leerer String",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Überprüfe die Länge des Katzenfakts in der Antwort\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.fact.length).to.be.above(0);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{\"api_domain\"}}",
+					"host": [
+						"{{\"api_domain\"}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "\"api_domain\"",
+			"value": "\"https://catfact.ninja/fact\"",
+			"type": "string"
+		}
+	]
+}
