@@ -212,7 +212,7 @@
 	"variable": [
 		{
 			"key": "api_domain",
-			"value": "\"https://catfact.ninja/fact\"",
+			"value": "https://catfact.ninja/fact",
 			"type": "string"
 		}
 	]
