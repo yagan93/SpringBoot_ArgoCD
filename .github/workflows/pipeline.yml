@@ -109,6 +109,13 @@ jobs:
           version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
           sed -i "s/tag: .*/tag: $version/" values_production.yml
 
+      - name: Commit changes to GitOps repository
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
+          git add values_production.yml
+          git commit --allow-empty -m "Deploy $version to production"    
+
       - name: Commit and push changes to GitOps repository
         run: |
           git config --global user.email "github-actions@github.com"
