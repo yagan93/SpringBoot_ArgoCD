@@ -100,6 +100,9 @@ jobs:
           token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
           ref: main
 
+      - name: Create feature branch
+        run: git checkout -b feature/production
+
       - name: Update image tag with version from staging in production values.yml
         run: |
           version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
@@ -111,7 +114,7 @@ jobs:
           git config --global user.name "github-actions"
           git add values_production.yml
           git commit -m "Deploy $version to production"
-          git push origin HEAD:refs/heads/feature/production
+          git push origin HEAD
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
