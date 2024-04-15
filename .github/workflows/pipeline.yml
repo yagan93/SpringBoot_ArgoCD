@@ -116,3 +116,14 @@ jobs:
          title: "Update Production with changes"
          body: |
           This Pull Request proposes updating the production environment with changes made from the staging environment.
+
+  merge-on-approval:
+    runs-on: ubuntu-latest
+    needs: deploy-to-production
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    steps:
+      - name: Merge Pull Request
+        uses: peter-evans/auto-merge@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ steps.create_pull_request.outputs.pull_request_number }}
