@@ -115,11 +115,10 @@ jobs:
           git add values_production.yml
           git commit --allow-empty -m "Deploy $version to production"
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: "Deploy $version to production"
-          body: |
-            Dieser Pull Request enthält die Aktualisierungen für das Produktions-Deployment.
-            Bitte überprüfen und zusammenführen, wenn alles gut aussieht.
+      - name: Commit and push changes to GitOps repository
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
+          git add values_production.yml
+          git commit --allow-empty -m "Deploy $version to production"
+          git push
