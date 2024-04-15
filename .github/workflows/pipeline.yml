@@ -114,7 +114,7 @@ jobs:
           git config --global user.name "github-actions"
           git add values_production.yml
           git commit -m "Deploy $version to production"
-          git push origin HEAD
+          git push origin HEAD:feature/production
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
