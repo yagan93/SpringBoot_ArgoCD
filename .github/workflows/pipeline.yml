@@ -101,6 +101,22 @@ jobs:
           newman run ./src/test/tests/system/CatFactsTests.json
           #newman run https://github.com/Trojka2000/SpringBoot_ArgoCD/blob/086f4a80bffd20297f901ab11f0ac4ac27b53409/src/test/tests/system/CatFactsTests.json
 
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.actor }}/ArgoCD_GitOps
+          token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
+          ref: main
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: update-production
+          title: "Update Production with changes"
+          body: |
+            This Pull Request proposes updating the production environment with changes made from the staging environment.
+
 
   deploy-to-production:
     runs-on: ubuntu-latest
