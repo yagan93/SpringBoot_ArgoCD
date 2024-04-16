@@ -26,14 +26,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://catfact.ninja/fact",
-					"protocol": "https",
+					"raw": "{{api_domain}}",
 					"host": [
-						"catfact",
-						"ninja"
-					],
-					"path": [
-						"fact"
+						"{{api_domain}}"
 					]
 				}
 			},
@@ -61,9 +56,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{\"api_domain\"}}",
+					"raw": "{{api_domain}}",
 					"host": [
-						"{{\"api_domain\"}}"
+						"{{api_domain}}"
 					]
 				}
 			},
@@ -89,9 +84,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{\"api_domain\"}}",
+					"raw": "{{api_domain}}",
 					"host": [
-						"{{\"api_domain\"}}"
+						"{{api_domain}}"
 					]
 				}
 			},
@@ -120,9 +115,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{\"api_domain\"}}",
+					"raw": "{{api_domain}}",
 					"host": [
-						"{{\"api_domain\"}}"
+						"{{api_domain}}"
 					]
 				}
 			},
@@ -149,9 +144,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{\"api_domain\"}}",
+					"raw": "{{api_domain}}",
 					"host": [
-						"{{\"api_domain\"}}"
+						"{{api_domain}}"
 					]
 				}
 			},
@@ -178,15 +173,30 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{\"api_domain\"}}",
+					"raw": "{{api_domain}}",
 					"host": [
-						"{{\"api_domain\"}}"
+						"{{api_domain}}"
 					]
 				}
 			},
 			"response": []
 		}
 	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "abc123",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "domainKey",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
