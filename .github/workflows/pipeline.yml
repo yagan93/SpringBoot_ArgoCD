@@ -78,7 +78,7 @@ jobs:
 
       - name: Wait for ArgoCD deployment
         run: |
-          # Add commands to check the status of ArgoCD deployment here
+          # Add commands -to check the status of ArgoCD deployment here
           # You may use ArgoCD CLI or API to check the deployment status
           # Example:
           # argocd app wait <APP_NAME> --timeout 300
