@@ -67,13 +67,20 @@ jobs:
         run: |
           sed -i "s/tag: .*/tag: ${{ env.PROJECT_VERSION }}/" values_staging.yml
 
-      - name: Commit and push changes to GitOps repository
+      - name: Create branch
         run: |
-          git config --global user.email "github-actions@github.com"
-          git config --global user.name "github-actions"
-          git add values_staging.yml
-          git commit --allow-empty -m "Deploy ${{ env.PROJECT_VERSION }} to staging"
-          git push
+          git checkout -b feature/production
+          git push origin feature/production
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Merge feature/production into main"
+          branch: main
+          title: "Merge feature/production into main"
+          body: |
+            This pull request merges the changes from the feature/production branch into the main branch.
 
       - name: Wait for ArgoCD deployment
         run: |
@@ -121,8 +128,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Merge feature/production into main"
+          branch: main
           title: "Merge feature/production into main"
           body: |
             This pull request merges the changes from the feature/production branch into the main branch.
-          branch: feature
-          base: main
+      
