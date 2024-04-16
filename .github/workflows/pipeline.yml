@@ -45,7 +45,7 @@ jobs:
         run: npm install -g newman
 
       - name: Run Newman tests
-        run: newman run test/system/Randomuser.postman_collection.json
+        run: newman run src/test/system/Randomuser.postman_collection.json
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
