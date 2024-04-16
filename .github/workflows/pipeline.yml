@@ -96,6 +96,10 @@ jobs:
           # Example:
           # newman run collection.json -e environment.json
 
+      - name: Delete feature branch after merge
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+        run: git push origin --delete feature/production
+
   deploy-to-production:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
