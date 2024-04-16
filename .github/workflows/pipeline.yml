@@ -80,6 +80,7 @@ jobs:
           branch: main
           title: "Merge feature/production into main"
           body: |
+            @ZeRoOW13, überprüfe
             This pull request merges the changes from the feature/production branch into the main branch.
 
       - name: Wait for ArgoCD deployment
