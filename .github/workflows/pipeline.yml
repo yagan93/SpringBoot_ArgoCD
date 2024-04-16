@@ -121,7 +121,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Merge feature/production into main"
-          branch: main
           title: "Merge feature/production into main"
           body: |
             This pull request merges the changes from the feature/production branch into the main branch.
+          branch: feature
+          base: main
