@@ -8,7 +8,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "person")
 public class Person {
-
+//hallo
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "UUID", type = org.hibernate.id.uuid.UuidGenerator.class)
