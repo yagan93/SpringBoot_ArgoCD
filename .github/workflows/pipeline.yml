@@ -90,44 +90,43 @@ jobs:
           # You may use Newman for system testing
           # Example:
           # newman run collection.json -e environment.json
-  jobs:
   deploy-to-production:
-  runs-on: ubuntu-latest
-  if: github.ref == 'refs/heads/main'
-  steps:
-    - name: Checkout GitOps repository
-      uses: actions/checkout@v4
-      with:
-        repository: 'Vukischmucki/ArgoCD_GitOps'
-        token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
-        ref: main
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout GitOps repository
+        uses: actions/checkout@v4
+        with:
+          repository: 'Vukischmucki/ArgoCD_GitOps'
+          token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
+          ref: main
 
-    - name: Update image tag with version from staging in production values.yml
-      run: |
-        version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
-        sed -i "s/tag: .*/tag: $version/" values_production.yml
+      - name: Update image tag with version from staging in production values.yml
+        run: |
+          version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
+          sed -i "s/tag: .*/tag: $version/" values_production.yml
 
-    - name: Setup Global Git Config
-      run: |
-        git config --global user.email "github-actions@github.com"
-        git config --global user.name "github-actions"
+      - name: Setup Global Git Config
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
 
-    - name: Create New Branch
-      run: |
-        git checkout -b branch-fuer-aenderungen
+      - name: Create New Branch
+        run: |
+          git checkout -b branch-fuer-aenderungen
 
-    - name: Add values_production.yml and Commit Changes
-      run: |
-        git add values_production.yml
-        git commit --allow-empty -m "Deploy $version to production"
+      - name: Add values_production.yml and Commit Changes
+        run: |
+          git add values_production.yml
+          git commit --allow-empty -m "Deploy $version to production"
 
-    - name: Push Branch
-      run: |
-        git push origin branch-fuer-aenderungen
+      - name: Push Branch
+        run: |
+          git push origin branch-fuer-aenderungen
 
-    # Hier wird der Pull Request erstellt
-    - name: Create Pull Request
-      run: |
-        gh pr create --base master --head branch-fuer-aenderungen -t "Deploy $version to production" -b "Pull Request body" -R Vukischmucki/ArgoCD_GitOps,
-        env:
-           GITHUB_TOKEN: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
+      # Hier wird der Pull Request erstellt
+      - name: Create Pull Request
+        run: |
+          gh pr create --base master --head branch-fuer-aenderungen -t "Deploy $version to production" -b "Pull Request body" -R Vukischmucki/ArgoCD_GitOps,
+          env:
+             GITHUB_TOKEN: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
