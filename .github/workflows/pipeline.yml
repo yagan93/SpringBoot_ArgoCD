@@ -55,6 +55,12 @@ jobs:
           repository: ${{ secrets.DOCKER_USERNAME }}/spring
           tag: ${{ env.PROJECT_VERSION }}
 
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run system tests with Newman
+        run: newman run "C:\Users\manu_\IdeaProjects\SpringBoot_ArgoCD\src\test\systems\myCollection.json"
+
       - name: Checkout GitOps repository
         uses: actions/checkout@v4
         with:
@@ -73,20 +79,6 @@ jobs:
           git add values_staging.yml
           git commit --allow-empty -m "Deploy ${{ env.PROJECT_VERSION }} to staging"
           git push
-
-      - name: Wait for ArgoCD deployment
-        run: |
-          # Add commands to check the status of ArgoCD deployment here
-          # You may use ArgoCD CLI or API to check the deployment status
-          # Example:
-          # argocd app wait <APP_NAME> --timeout 300
-
-      - name: Run system tests
-        run: |
-          # Add the execution of further tests here 
-          # You may use Newman for system testing
-          # Example:
-          # newman run collection.json -e environment.json
 
   deploy-to-production:
     runs-on: ubuntu-latest
