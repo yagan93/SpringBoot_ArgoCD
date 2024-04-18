@@ -127,6 +127,6 @@ jobs:
       # Hier wird der Pull Request erstellt
       - name: Create Pull Request
         run: |
-          gh pr create --base master --head branch-fuer-aenderungen -t "Deploy $version to production" -b "Pull Request body" -R Vukischmucki/ArgoCD_GitOps,
-          env:
-             GITHUB_TOKEN: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
+          gh pr create --base master --head branch-fuer-aenderungen -t "Deploy $version to production" -b "Pull Request body" -R Vukischmucki/ArgoCD_GitOps
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
