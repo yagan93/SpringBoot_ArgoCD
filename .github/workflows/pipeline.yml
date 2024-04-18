@@ -12,7 +12,7 @@ jobs:
     if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/release'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actionfs/checkout@v4
 
       - name: Set up JDK
         uses: actions/setup-java@v1
