@@ -114,10 +114,10 @@ jobs:
       - name: Create Pull Request
         run: |
           gh pr create \
-          --base branch-fuer-aenderungen \
-          --head branch-fuer-aenderungen2 \
+          --base main \
+          --head branch-fuer-aenderungen \
           --title "Deploy $version to production" \
-          --body "Pull Request body" \
+          --body "Pull Request body " \
           --repo Vukischmucki/ArgoCD_GitOps
 
         env:
