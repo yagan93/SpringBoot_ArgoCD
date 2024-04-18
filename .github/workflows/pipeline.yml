@@ -97,7 +97,7 @@ jobs:
       - name: Checkout GitOps repository
         uses: actions/checkout@v4
         with:
-          repository: 'Vukischmucki/ArgoCD_GitOps'
+          repository: ${{ github.actor }}/ArgoCD_GitOps
           token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
           ref: main
 
@@ -106,27 +106,23 @@ jobs:
           version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
           sed -i "s/tag: .*/tag: $version/" values_production.yml
 
-      - name: Setup Global Git Config
+      - name: Commit changes
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "github-actions"
-
-      - name: Create New Branch
-        run: |
-          git checkout -b branch-fuer-aenderungen
-
-      - name: Add values_production.yml and Commit Changes
-        run: |
           git add values_production.yml
           git commit --allow-empty -m "Deploy $version to production"
 
-      - name: Push Branch
+      - name: Push to new branch
         run: |
-          git push origin branch-fuer-aenderungen
+          git branch -M production-deploy-$GITHUB_RUN_ID
+          git push -u origin production-deploy-$GITHUB_RUN_ID
 
-      # Hier wird der Pull Request erstellt
       - name: Create Pull Request
-        run: |
-          gh pr create --base master --head branch-fuer-aenderungen -t "Deploy $version to production" -b "Pull Request body" -R Vukischmucki/ArgoCD_GitOps
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: repo-sync/pull-request@v4
+        with:
+          source_branch: "production-deploy-$GITHUB_RUN_ID"
+          destination_branch: "main"
+          pr_title: "Deploy $version to production"
+          pr_body: "A new version of the application has been prepared for deployment to production. Please review and approve this pull request."
+          github_token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
