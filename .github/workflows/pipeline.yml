@@ -6,6 +6,7 @@ on:
   pull_request:
     branches: [ '*' ]
 
+
 jobs:
   run-unit-and-integration-tests:
     runs-on: ubuntu-latest
@@ -41,6 +42,11 @@ jobs:
         with:
           java-version: 17
 
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run Newman tests
+        run: newman run src/test/system/MQ.postman_collection.json
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -96,7 +102,7 @@ jobs:
       - name: Checkout GitOps repository
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.actor }}/ArgoCD_GitOps
+          repository: Vukischmucki/ArgoCD_GitOps
           token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
           ref: main
 
@@ -105,10 +111,15 @@ jobs:
           version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
           sed -i "s/tag: .*/tag: $version/" values_production.yml
 
-      - name: Commit and push changes to GitOps repository
+      - name: Create Pull Request
         run: |
-          git config --global user.email "github-actions@github.com"
-          git config --global user.name "github-actions"
-          git add values_production.yml
-          git commit --allow-empty -m "Deploy $version to production"
-          git push
+          gh pr create \
+          --base main \
+          --head branch-fuer-aenderungen \
+          --title "Deploy $version to production" \
+          --body "Pull Request body " \
+          --repo Vukischmucki/ArgoCD_GitOps
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
+
