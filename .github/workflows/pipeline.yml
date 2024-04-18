@@ -115,7 +115,7 @@ jobs:
         run: |
           gh pr create \
           --base main \
-          --head branch-fuer-aenderungen2 \
+          --head Test1 \
           --title "Deploy $version to production" \
           --body "Pull Request body" \
           --repo Vukischmucki/ArgoCD_GitOps
