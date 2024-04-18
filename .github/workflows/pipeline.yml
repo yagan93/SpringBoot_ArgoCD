@@ -112,4 +112,3 @@ jobs:
           git add values_production.yml
           git commit --allow-empty -m "Deploy $version to production"
           gh pr create --base main --head release --title "Pull Request" --body "Pull Request beim mergen von release zu main"
-          git push
