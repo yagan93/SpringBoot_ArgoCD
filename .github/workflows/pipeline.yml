@@ -118,7 +118,7 @@ jobs:
           --head branch-fuer-aenderungen \
           --title "Deploy $version to production" \
           --body "Pull Request body" \
-          --repo github.actor/ArgoCD_GitOps
+          --repo Vukischmucki/ArgoCD_GitOps
         env:
           GITHUB_TOKEN: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
 
