@@ -117,8 +117,9 @@ jobs:
           --base main \
           --head branch-fuer-aenderungen \
           --title "Deploy $version to production" \
-          --body "Pull Request body @ZeRoOW13" \
+          --body "Pull Request body" \
           --repo Vukischmucki/ArgoCD_GitOps
+          
 
         env:
           GITHUB_TOKEN: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
