@@ -6,6 +6,7 @@ on:
   pull_request:
     branches: [ '*' ]
 
+
 jobs:
   run-unit-and-integration-tests:
     runs-on: ubuntu-latest
@@ -41,6 +42,11 @@ jobs:
         with:
           java-version: 17
 
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run Newman tests
+        run: newman run src/test/system/MQ.postman_collection.json
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -106,12 +112,13 @@ jobs:
           sed -i "s/tag: .*/tag: $version/" values_production.yml
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          commit-message: "Deploy $version to production"
-          title: "Deploy $version to production"
-          branch: "deploy-production-$version"
-          base: "main"
-          token: ${{ secrets.GITHUB_TOKEN }}
-
+        run: |
+          gh pr create \
+          --base main \
+          --head branch-fuer-aenderungen \
+          --title "Deploy $version to production" \
+          --body "Pull Request body" \
+          --repo github.actor/ArgoCD_GitOps
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
 
