@@ -93,24 +93,25 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-    - name: Checkout GitOps repository
-      uses: actions/checkout@v4
-      with:
-        repository: Vukischmucki/ArgoCD_GitOps
-        token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
-        ref: main
+      - name: Checkout GitOps repository
+        uses: actions/checkout@v4
+        with:
+          repository: Vukischmucki/ArgoCD_GitOps
+          token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
+          ref: main
 
-    - name: Update image tag with version from staging in production values.yml
-      run: |
-        version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
-        sed -i "s/tag: .*/tag: $version/" values_production.yml
+      - name: Update image tag with version from staging in production values.yml
+        run: |
+          version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
+          sed -i "s/tag: .*/tag: $version/" values_production.yml
 
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v3
-      with:
-        commit-message: "Deploy $version to production"
-        title: "Deploy $version to production"
-        branch: "main"
-        base: "main"
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: "Deploy $version to production"
+          title: "Deploy $version to production"
+          branch: "deploy-production-$version"
+          base: "main"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
 
