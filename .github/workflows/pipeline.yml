@@ -119,7 +119,7 @@ jobs:
           git push -u origin production-deploy-$GITHUB_RUN_ID
 
       - name: Create Pull Request
-        uses: repo-sync/pull-request@v4
+        uses: repo-sync/pull-request@v2
         with:
           source_branch: "production-deploy-$GITHUB_RUN_ID"
           destination_branch: "main"
