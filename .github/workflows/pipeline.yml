@@ -90,39 +90,38 @@ jobs:
           # You may use Newman for system testing
           # Example:
           # newman run collection.json -e environment.json
-  deploy-to-production:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout GitOps repository
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ github.actor }}/ArgoCD_GitOps
-          token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
-          ref: main
+deploy-to-production:
+  runs-on: ubuntu-latest
+  if: github.ref == 'refs/heads/main'
+  steps:
+    - name: Checkout GitOps repository
+      uses: actions/checkout@v4
+      with:
+        repository: Vukischmucki/ArgoCD_GitOps
+        token: ${{ secrets.GITHUB_TOKEN }}
+        ref: main
 
-      - name: Update image tag with version from staging in production values.yml
-        run: |
-          version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
-          sed -i "s/tag: .*/tag: $version/" values_production.yml
+    - name: Update image tag with version from staging in production values.yml
+      run: |
+        version=$(grep 'tag:' values_staging.yml | awk '{print $2}')
+        sed -i "s/tag: .*/tag: $version/" values_production.yml
 
-      - name: Commit changes
-        run: |
-          git config --global user.email "github-actions@github.com"
-          git config --global user.name "github-actions"
-          git add values_production.yml
-          git commit --allow-empty -m "Deploy $version to production"
+    - name: Commit changes
+      run: |
+        git config --global user.email "github-actions@github.com"
+        git config --global user.name "github-actions"
+        git add values_production.yml
+        git commit --allow-empty -m "Deploy $version to production"
 
-      - name: Push to new branch
-        run: |
-          git branch -M production-deploy-$GITHUB_RUN_ID
-          git push -u origin production-deploy-$GITHUB_RUN_ID
+    - name: Push to new branch
+      run: |
+        git branch -M "production-deploy-${{ github.run_id }}"
+        git push -u origin "production-deploy-${{ github.run_id }}"
 
-      - name: Create Pull Request
-        uses: repo-sync/pull-request@v2
-        with:
-          source_branch: "production-deploy-$GITHUB_RUN_ID"
-          destination_branch: "main"
-          pr_title: "Deploy $version to production"
-          pr_body: "A new version of the application has been prepared for deployment to production. Please review and approve this pull request."
-          github_token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
+    - name: Create Pull Request
+      uses: repo-sync/pull-request@v2
+      with:
+        source_branch: "production-deploy-${{ github.run_id }}"
+        destination_branch: 'main'
+        pr_title: "Deploy ${{ github.run_id }} to production"
+        github_token: ${{ secrets.GITHUB_TOKEN }}}}
