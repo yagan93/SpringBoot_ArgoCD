@@ -112,3 +112,11 @@ jobs:
           git add values_production.yml
           git commit --allow-empty -m "Deploy $version to production"
           gh pr create --base main --head release --title "Pull Request" --body "Pull Request beim mergen von release zu main"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run system tests
+        run: newman run ./tests/system/Systemtests.postman_collection.json
