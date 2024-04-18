@@ -125,3 +125,7 @@ jobs:
           gh pr create --base master --head branch-fuer-aenderungen -t "Deploy $version to production" -b "Pull Request body" -R Vukischmucki/ArgoCD_GitOps
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Sync with remote and push changes
+        run: |
+          git pull origin $branch_name
+          git push origin $branch_name
